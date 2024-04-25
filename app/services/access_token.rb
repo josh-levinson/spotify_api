@@ -1,5 +1,3 @@
-require 'debug'
-
 class AccessToken
   # curl -X POST "https://accounts.spotify.com/api/token" \
   #   -H "Content-Type: application/x-www-form-urlencoded" \
@@ -11,7 +9,8 @@ class AccessToken
     @spotify_url = "https://accounts.spotify.com/api/token"
 
     response = HTTParty.post(@spotify_url, body: body, headers: { 'Content-Type' => 'application/x-www-form-urlencoded' })
-    response.body
+    parsed_response = JSON.parse(response.body)
+    parsed_response["access_token"]
   end
 
   private
