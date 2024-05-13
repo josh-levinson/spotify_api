@@ -1,4 +1,4 @@
-class Genre < ApplicationService
+class SearchGenre < ApplicationService
   attr_reader :genre
 
   def initialize(genre)
@@ -6,13 +6,20 @@ class Genre < ApplicationService
   end
 
   def call
-    genre_params = URI.encode_www_form_component(genre)
-    query_params = "q=genre:#{genre_params}&type=artist&limit=20"
-    genre_url = "https://api.spotify.com/v1/search?#{query_params}"
-    debugger
+    genre_url = "https://api.spotify.com/v1/search?#{build_query}"
     access_token = AccessToken.call
     headers = { 'Authorization': "Bearer #{access_token}" }
     response = HTTParty.get(genre_url, headers: headers)
     JSON.parse(response.body)
+  end
+
+  private
+
+  def genre_params
+    genre.gsub(' ', '-')
+  end
+
+  def build_query
+    "q=genre%3A#{genre_params}&type=artist&limit=20"
   end
 end
